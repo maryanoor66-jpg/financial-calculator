@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinCalc Pro — Financial Calculator by Marya Noor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1f3d;
+    --navy2: #162847;
+    --gold: #c9963a;
+    --gold-light: #e8b55a;
+    --cream: #f7f3ee;
+    --cream2: #ede8e0;
+    --white: #ffffff;
+    --muted: #8a8a9a;
+    --success: #2d7a4f;
+    --danger: #b03030;
+    --success-bg: #eaf5ee;
+    --danger-bg: #faeaea;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(15,31,61,0.10);
+    --shadow-lg: 0 8px 48px rgba(15,31,61,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(201,150,58,0.3);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+  .logo span { color: var(--gold); }
+  .header-tag {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--navy);
+    padding: 4rem 2rem 5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(201,150,58,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,150,58,0.4);
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5vw, 54px);
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+  }
+  .hero h1 em { color: var(--gold-light); font-style: normal; }
+  .hero p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    max-width: 540px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+  .hero-pills {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 100px;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 860px;
+    margin: -2rem auto 4rem;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--navy2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    overflow: hidden;
+    border: 1px solid rgba(201,150,58,0.2);
+    border-bottom: none;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 1rem 0.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.45);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active {
+    color: var(--gold-light);
+    background: rgba(201,150,58,0.1);
+  }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+  }
+  .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); }
+
+  /* CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--cream2);
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* FORM */
+  .panel-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+  .panel-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+  @media(max-width:600px) { .grid-2,.grid-3 { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.25rem; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; }
+  .field input, .field select {
+    padding: 11px 14px;
+    border: 1.5px solid var(--cream2);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--navy);
+    background: var(--cream);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--gold); background: var(--white); }
+
+  .calc-btn {
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 13px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .calc-btn:hover { background: var(--navy2); }
+  .calc-btn:active { transform: scale(0.99); }
+
+  /* RESULTS */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+  .result-card {
+    background: var(--cream);
+    border: 1px solid var(--cream2);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+    animation: fadeUp 0.3s ease both;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .result-card.highlight { background: var(--navy); border-color: var(--navy); }
+  .result-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+  .result-card.highlight .result-label { color: rgba(255,255,255,0.5); }
+  .result-value { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--navy); }
+  .result-card.highlight .result-value { color: var(--gold-light); }
+
+  /* DIVIDER */
+  .section-divider { border: none; border-top: 1px solid var(--cream2); margin: 1.5rem 0; }
+
+  /* AMORTISATION TABLE */
+  .table-wrap { max-height: 240px; overflow-y: auto; border: 1px solid var(--cream2); border-radius: var(--radius-sm); margin-top: 0.75rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead { position: sticky; top: 0; background: var(--cream); z-index: 1; }
+  th { padding: 10px 14px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); border-bottom: 1px solid var(--cream2); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--cream2); color: var(--navy); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--cream); }
+
+  /* P&L BREAKDOWN */
+  .pl-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--cream2); font-size: 14px; }
+  .pl-row:last-child { border-bottom: none; }
+  .pl-row.total { font-weight: 600; font-size: 15px; padding-top: 12px; border-bottom: none; }
+  .pl-row .pl-label { color: var(--navy); }
+  .pl-row .pl-label.muted { color: var(--muted); }
+  .pl-val { font-weight: 500; }
+  .pl-val.neg { color: var(--danger); }
+  .pl-val.pos { color: var(--success); }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; margin-left: 8px; vertical-align: middle; }
+  .badge.profit { background: var(--success-bg); color: var(--success); }
+  .badge.loss { background: var(--danger-bg); color: var(--danger); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--cream2);
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Fin<span>Calc</span> Pro</div>
+    <div class="header-tag">Built by Marya Noor · MBA Finance</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Free Financial Tool</div>
+  <h1>Smart calculators for<br><em>financial analysts</em></h1>
+  <p>Professional-grade ROI, loan, and profit & loss calculators — no sign-up, no cost, instant results.</p>
+  <div class="hero-pills">
+    <span class="pill">ROI Calculator</span>
+    <span class="pill">Loan & EMI</span>
+    <span class="pill">Profit & Loss</span>
+    <span class="pill">Amortisation Schedule</span>
+  </div>
+</div>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('roi',this)">ROI Calculator</button>
+    <button class="tab-btn" onclick="switchTab('loan',this)">Loan & EMI</button>
+    <button class="tab-btn" onclick="switchTab('pl',this)">Profit & Loss</button>
+  </div>
+
+  <div class="calc-card">
+
+    <!-- ROI -->
+    <div class="panel active" id="panel-roi">
+      <p class="panel-title">Return on Investment</p>
+      <p class="panel-sub">Calculate net gain, ROI percentage, and payback period.</p>
+      <div class="grid-2">
+        <div class="field"><label>Initial Investment (€)</label><input type="number" id="roi-invest" value="10000" min="0"></div>
+        <div class="field"><label>Final Value (€)</label><input type="number" id="roi-final" value="15000" min="0"></div>
+      </div>
+      <div class="grid-2" style="margin-top:1rem">
+        <div class="field"><label>Duration (Years)</label><input type="number" id="roi-years" value="3" min="1"></div>
+        <div class="field"><label>Annual Costs (€, optional)</label><input type="number" id="roi-costs" value="0" min="0"></div>
+      </div>
+      <button class="calc-btn" onclick="calcROI()">Calculate ROI</button>
+      <div class="results-grid" id="roi-results"></div>
+    </div>
+
+    <!-- LOAN -->
+    <div class="panel" id="panel-loan">
+      <p class="panel-title">Loan & EMI Calculator</p>
+      <p class="panel-sub">Monthly repayments, total interest, and full amortisation schedule.</p>
+      <div class="grid-2">
+        <div class="field"><label>Loan Amount</label><input type="number" id="loan-amount" value="100000" min="0"></div>
+        <div class="field"><label>Annual Interest Rate (%)</label><input type="number" id="loan-rate" value="5" step="0.1" min="0"></div>
+      </div>
+      <div class="grid-2" style="margin-top:1rem">
+        <div class="field"><label>Loan Term (Years)</label><input type="number" id="loan-years" value="10" min="1"></div>
+        <div class="field"><label>Currency</label>
+          <select id="loan-currency">
+            <option value="€">Euro (€)</option>
+            <option value="$">US Dollar ($)</option>
+            <option value="£">Pound (£)</option>
+            <option value="₨">PKR (₨)</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcLoan()">Calculate EMI</button>
+      <div class="results-grid" id="loan-results"></div>
+      <div id="amort-section"></div>
+    </div>
+
+    <!-- P&L -->
+    <div class="panel" id="panel-pl">
+      <p class="panel-title">Profit & Loss Statement</p>
+      <p class="panel-sub">Full P&L breakdown including gross profit, EBIT, and net profit after tax.</p>
+      <div class="grid-2">
+        <div class="field"><label>Total Revenue (€)</label><input type="number" id="pl-rev" value="500000" min="0"></div>
+        <div class="field"><label>Cost of Goods Sold (€)</label><input type="number" id="pl-cogs" value="200000" min="0"></div>
+      </div>
+      <div class="grid-3" style="margin-top:1rem">
+        <div class="field"><label>Operating Expenses (€)</label><input type="number" id="pl-opex" value="80000" min="0"></div>
+        <div class="field"><label>Other Income (€)</label><input type="number" id="pl-other" value="0" min="0"></div>
+        <div class="field"><label>Tax Rate (%)</label><input type="number" id="pl-tax" value="25" min="0" max="100"></div>
+      </div>
+      <button class="calc-btn" onclick="calcPL()">Calculate P&L</button>
+      <div class="results-grid" id="pl-results"></div>
+      <div id="pl-breakdown"></div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  Built with ♥ by <strong>Marya Noor</strong> · MBA Finance · MSc Project Management ·
+  <a href="https://linkedin.com/in/maryanoor-40093a182" target="_blank">LinkedIn</a> ·
+  <a href="https://github.com/maryanoor66-jpg" target="_blank">GitHub</a>
+</footer>
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  function fmt(n, sym) {
+    sym = sym || '€';
+    return sym + Math.round(n).toLocaleString('de-DE');
+  }
+
+  function pct(n) { return n.toFixed(2) + '%'; }
+
+  function resultCard(label, value, highlight) {
+    return '<div class="result-card' + (highlight ? ' highlight' : '') + '">' +
+      '<div class="result-label">' + label + '</div>' +
+      '<div class="result-value">' + value + '</div>' +
+      '</div>';
+  }
+
+  function calcROI() {
+    var inv = parseFloat(document.getElementById('roi-invest').value) || 0;
+    var fin = parseFloat(document.getElementById('roi-final').value) || 0;
+    var yrs = parseFloat(document.getElementById('roi-years').value) || 1;
+    var costs = parseFloat(document.getElementById('roi-costs').value) || 0;
+    var netGain = fin - inv - (costs * yrs);
+    var roi = (netGain / inv) * 100;
+    var annualROI = (Math.pow(fin / inv, 1 / yrs) - 1) * 100;
+    var payback = inv / (netGain / yrs);
+    document.getElementById('roi-results').innerHTML =
+      resultCard('Net Gain / Loss', fmt(netGain), true) +
+      resultCard('Total ROI', pct(roi), true) +
+      resultCard('Annual ROI', pct(annualROI)) +
+      resultCard('Payback Period', payback > 0 ? payback.toFixed(1) + ' yrs' : '—');
+  }
+
+  function calcLoan() {
+    var P = parseFloat(document.getElementById('loan-amount').value) || 0;
+    var annualRate = parseFloat(document.getElementById('loan-rate').value) || 0;
+    var yrs = parseInt(document.getElementById('loan-years').value) || 1;
+    var sym = document.getElementById('loan-currency').value;
+    var r = annualRate / 100 / 12;
+    var n = yrs * 12;
+    var emi = r === 0 ? P / n : P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    var total = emi * n;
+    var interest = total - P;
+    document.getElementById('loan-results').innerHTML =
+      resultCard('Monthly EMI', fmt(emi, sym), true) +
+      resultCard('Total Payment', fmt(total, sym), true) +
+      resultCard('Total Interest', fmt(interest, sym)) +
+      resultCard('Interest %', pct((interest / P) * 100));
+
+    var rows = '';
+    var bal = P;
+    for (var y = 1; y <= Math.min(yrs, 30); y++) {
+      var yPrin = 0, yInt = 0;
+      for (var m = 0; m < 12; m++) {
+        var intPart = bal * r;
+        var prinPart = emi - intPart;
+        yPrin += prinPart; yInt += intPart; bal -= prinPart;
+      }
+      rows += '<tr><td>' + y + '</td><td>' + fmt(yPrin, sym) + '</td><td>' + fmt(yInt, sym) + '</td><td>' + fmt(Math.max(bal, 0), sym) + '</td></tr>';
+    }
+    document.getElementById('amort-section').innerHTML =
+      '<hr class="section-divider">' +
+      '<p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px">Amortisation Schedule</p>' +
+      '<div class="table-wrap"><table><thead><tr><th>Year</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+
+  function calcPL() {
+    var rev = parseFloat(document.getElementById('pl-rev').value) || 0;
+    var cogs = parseFloat(document.getElementById('pl-cogs').value) || 0;
+    var opex = parseFloat(document.getElementById('pl-opex').value) || 0;
+    var other = parseFloat(document.getElementById('pl-other').value) || 0;
+    var taxRate = parseFloat(document.getElementById('pl-tax').value) || 0;
+    var gross = rev - cogs;
+    var ebit = gross - opex + other;
+    var taxAmt = Math.max(ebit, 0) * (taxRate / 100);
+    var net = ebit - taxAmt;
+    var gm = rev > 0 ? (gross / rev) * 100 : 0;
+    var nm = rev > 0 ? (net / rev) * 100 : 0;
+    var pos = net >= 0;
+    document.getElementById('pl-results').innerHTML =
+      resultCard('Gross Profit', fmt(gross), true) +
+      resultCard('Gross Margin', pct(gm), true) +
+      resultCard('Net ' + (pos ? 'Profit' : 'Loss'), fmt(Math.abs(net))) +
+      resultCard('Net Margin', pct(nm));
+    document.getElementById('pl-breakdown').innerHTML =
+      '<hr class="section-divider">' +
+      '<p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:12px">P&L Breakdown</p>' +
+      row('Revenue', fmt(rev), '') +
+      row('Cost of Goods Sold', '− ' + fmt(cogs), 'neg') +
+      row('Gross Profit', fmt(gross), 'pos', true) +
+      row('Operating Expenses', '− ' + fmt(opex), 'neg') +
+      row('Other Income', '+ ' + fmt(other), 'pos') +
+      row('EBIT', fmt(ebit), ebit >= 0 ? 'pos' : 'neg', true) +
+      row('Tax (' + taxRate + '%)', '− ' + fmt(taxAmt), 'neg') +
+      row('Net ' + (pos ? 'Profit' : 'Loss') + ' <span class="badge ' + (pos ? 'profit' : 'loss') + '">' + (pos ? 'Profit' : 'Loss') + '</span>', fmt(Math.abs(net)), pos ? 'pos' : 'neg', true);
+  }
+
+  function row(label, val, cls, total) {
+    return '<div class="pl-row' + (total ? ' total' : '') + '">' +
+      '<span class="pl-label' + (!total ? ' muted' : '') + '">' + label + '</span>' +
+      '<span class="pl-val ' + cls + '">' + val + '</span></div>';
+  }
+
+  calcROI(); calcLoan(); calcPL();
+</script>
+</body>
+</html>
